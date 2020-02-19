@@ -13,15 +13,15 @@ type FunctionSpec struct {
 	// INSERT ADDITIONAL SPEC FIELDS - desired state of cluster
 	// Important: Run "operator-sdk generate k8s" to regenerate code after modifying this file
 	// Add custom validation using kubebuilder tags: https://book-v1.book.kubebuilder.io/beyond_basics/generating_crd.html
-	Function         string            `json:"function"`
-	Identifier       string            `json:"identifier"`
-	Version          string            `json:"version"`
-	Runtime          string            `json:"runtime"`
+	Function         string            `json:"function" binding:"required"`
+	Identifier       string            `json:"identifier" binding:"required"`
+	Version          string            `json:"version" binding:"required"`
+	Runtime          string            `json:"runtime" binding:"required"`
 	Deps             string            `json:"deps,omitempty"`
-	Handler          string            `json:"handler"`
-	ContentType      string            `json:"contentType"`
-	Timeout          string            `json:"timeout"`
-	Size             *int32            `json:"size"`
+	Handler          string            `json:"handler" binding:"required"`
+	ContentType      string            `json:"contentType" binding:"required"`
+	Timeout          string            `json:"timeout" binding:"required"`
+	Size             *int32            `json:"size" binding:"required"`
 	ExposedPort      int32             `json:"exposedPorts,omitempty"`
 	ExternalService  map[string]string `json:"externalService,omitempty"`
 	DataSource       string            `json:"dataSource,omitempty"`
@@ -42,6 +42,7 @@ type PodsStatus struct {
 	InitContainerStatuses []corev1.ContainerStatus `json:"initContainerStatuses"`
 	ContainerStatuses     []corev1.ContainerStatus `json:"containerStatuses"`
 }
+
 // +genclient
 // +k8s:deepcopy-gen:interfaces=k8s.io/apimachinery/pkg/runtime.Object
 
