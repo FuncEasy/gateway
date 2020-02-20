@@ -20,6 +20,8 @@ func main() {
 
 	r.Use(middleware.ErrorHandler)
 	r.Use(middleware.GetCRDClient(*env))
+	r.Use(middleware.DataSourceAuthentication(*env))
+	r.Use(middleware.DataSourceService(*env))
 
 	function := r.Group("/function")
 	function.POST("/create/:id", router.CreateFunctionCR)
@@ -27,6 +29,11 @@ func main() {
 	function.PUT("update/:id", router.UpdateFunctionCR)
 	function.DELETE("/delete/:id", router.DeleteFunctionCR)
 	function.POST("/call/:id", router.FunctionCall(*env, proxyHost))
+
+	dataSource := r.Group("/dataSource")
+	dataSource.POST("/create", router.CreateDataSource)
+	dataSource.POST("/update", router.UpdateDataSource)
+	dataSource.DELETE("/:id", router.DeleteDataSource)
 	err := r.Run(":8888")
 	if err != nil {
 		panic(err)
