@@ -6,6 +6,7 @@ import (
 	"github.com/funceasy/gateway/middleware"
 	"github.com/funceasy/gateway/router"
 	"github.com/gin-gonic/gin"
+	"os"
 )
 
 func main() {
@@ -13,12 +14,18 @@ func main() {
 	env = flag.String("env", "dev", "run env")
 	flag.Parse()
 	fmt.Println(*env)
-
+	port := os.Getenv("GATEWAY_SERVICE_PORT")
+	if port == "" {
+		port = ":8082"
+	} else {
+		port = ":" + port
+	}
 	proxyHost := "localhost:8001"
 
 	r := gin.Default()
 
 	r.Use(middleware.ErrorHandler)
+	r.Use(middleware.Authentication(*env))
 	r.Use(middleware.GetCRDClient(*env))
 	r.Use(middleware.DataSourceAuthentication(*env))
 	r.Use(middleware.DataSourceService(*env))
@@ -34,7 +41,7 @@ func main() {
 	dataSource.POST("/create", router.CreateDataSource)
 	dataSource.POST("/update", router.UpdateDataSource)
 	dataSource.DELETE("/:id", router.DeleteDataSource)
-	err := r.Run(":8888")
+	err := r.Run(port)
 	if err != nil {
 		panic(err)
 	}

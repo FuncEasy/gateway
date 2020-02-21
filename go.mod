@@ -4,6 +4,7 @@ go 1.13
 
 require (
 	github.com/Azure/go-autorest v11.1.2+incompatible // indirect
+	github.com/dgrijalva/jwt-go v3.2.0+incompatible
 	github.com/elazarl/goproxy v0.0.0-20180725130230-947c36da3153 // indirect
 	github.com/gin-gonic/gin v1.5.0
 	github.com/gogo/protobuf v1.3.1 // indirect

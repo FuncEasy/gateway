@@ -155,7 +155,7 @@ func FunctionCall(env string, proxyHost string) func(c *gin.Context) {
 		if env == "dev" {
 			url = fmt.Sprintf("http://%s/api/v1/namespaces/funceasy/services/http:function-%s:80/proxy/", proxyHost, id)
 		} else {
-			url = fmt.Sprintf("http://%s", id)
+			url = fmt.Sprintf("http://function-%s", id)
 		}
 		req, err := http.NewRequest("POST", url, bytes.NewBuffer(data))
 		if err != nil {
