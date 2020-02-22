@@ -32,7 +32,7 @@ func Authentication(env string) func(c *gin.Context) {
 	}
 }
 
-func getPublicKey(env string) jwt.Keyfunc{
+func getPublicKey(env string) jwt.Keyfunc {
 	return func(token *jwt.Token) (interface{}, error) {
 		if _, ok := token.Method.(*jwt.SigningMethodRSA); !ok {
 			return nil, fmt.Errorf("Invaild Token. ")
@@ -59,4 +59,3 @@ func getPublicKey(env string) jwt.Keyfunc{
 		}
 	}
 }
-

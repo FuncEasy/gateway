@@ -13,15 +13,15 @@ type FunctionSpec struct {
 	// INSERT ADDITIONAL SPEC FIELDS - desired state of cluster
 	// Important: Run "operator-sdk generate k8s" to regenerate code after modifying this file
 	// Add custom validation using kubebuilder tags: https://book-v1.book.kubebuilder.io/beyond_basics/generating_crd.html
-	Function         string            `json:"function" binding:"required"`
-	Identifier       string            `json:"identifier" binding:"required"`
-	Version          string            `json:"version" binding:"required"`
-	Runtime          string            `json:"runtime" binding:"required"`
+	Function         string            `json:"function,omitempty" binding:"required"`
+	Identifier       string            `json:"identifier,omitempty" binding:"required"`
+	Version          string            `json:"version,omitempty" binding:"required"`
+	Runtime          string            `json:"runtime,omitempty" binding:"required"`
 	Deps             string            `json:"deps,omitempty"`
-	Handler          string            `json:"handler" binding:"required"`
-	ContentType      string            `json:"contentType" binding:"required"`
-	Timeout          string            `json:"timeout" binding:"required"`
-	Size             *int32            `json:"size" binding:"required"`
+	Handler          string            `json:"handler,omitempty" binding:"required"`
+	ContentType      string            `json:"contentType,omitempty" binding:"required"`
+	Timeout          string            `json:"timeout,omitempty" binding:"required"`
+	Size             *int32            `json:"size,omitempty" binding:"required"`
 	ExposedPort      int32             `json:"exposedPorts,omitempty"`
 	ExternalService  map[string]string `json:"externalService,omitempty"`
 	DataSource       string            `json:"dataSource,omitempty"`
