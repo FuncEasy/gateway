@@ -141,7 +141,7 @@ func DeleteFunctionCR(c *gin.Context) {
 	}
 }
 
-func FunctionCall(env string, proxyHost string) func(c *gin.Context) {
+func FunctionCall(env string, proxyHost string, method string) func(c *gin.Context) {
 	return func(c *gin.Context) {
 		id := c.Param("id")
 		if id == "" {
@@ -157,7 +157,14 @@ func FunctionCall(env string, proxyHost string) func(c *gin.Context) {
 		} else {
 			url = fmt.Sprintf("http://function-%s", id)
 		}
-		req, err := http.NewRequest("POST", url, bytes.NewBuffer(data))
+		var req *http.Request
+		if method == "GET" {
+			query := c.DefaultQuery("query", "")
+			url = fmt.Sprintf("%s?%s", url, query)
+			req, err = http.NewRequest("GET", url, bytes.NewBuffer(data))
+		} else {
+			req, err = http.NewRequest("POST", url, bytes.NewBuffer(data))
+		}
 		if err != nil {
 			APIError.Panic(err)
 		}
@@ -181,6 +188,7 @@ func FunctionCall(env string, proxyHost string) func(c *gin.Context) {
 		})
 	}
 }
+
 
 func getDataSourceToken(c *gin.Context, dataSourceId string) string {
 	DataSourceToken, _ := c.Get("DATA_SOURCE_TOKEN")
