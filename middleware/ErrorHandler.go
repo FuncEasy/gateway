@@ -1,6 +1,7 @@
 package middleware
 
 import (
+	"fmt"
 	"github.com/funceasy/gateway/pkg/APIError"
 	"github.com/gin-gonic/gin"
 )
@@ -8,6 +9,7 @@ import (
 func ErrorHandler(c *gin.Context) {
 	defer func() {
 		if err := recover(); err != nil {
+			fmt.Println(err)
 			e, ok := err.(*APIError.Error)
 			if ok {
 				c.AbortWithStatusJSON(e.Code, gin.H{

@@ -1,7 +1,6 @@
 package middleware
 
 import (
-	"fmt"
 	CRDClient "github.com/funceasy/gateway/pkg/clientset/versioned"
 	"github.com/gin-gonic/gin"
 	"k8s.io/client-go/rest"
@@ -27,14 +26,12 @@ func GetCRDClient(env string) func(c *gin.Context) {
 				panic(err)
 			}
 			clientset, err = CRDClient.NewForConfig(cfg)
-		} else if env == "product" {
+		} else {
 			cfg, err := rest.InClusterConfig()
 			if err != nil {
 				panic(err)
 			}
 			clientset, err = CRDClient.NewForConfig(cfg)
-		} else {
-			panic(fmt.Errorf("ERR: Env Not Found "))
 		}
 		c.Set("CRDClientSet", clientset)
 		c.Next()

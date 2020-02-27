@@ -5,6 +5,7 @@ import (
 	"github.com/dgrijalva/jwt-go"
 	"github.com/funceasy/gateway/pkg/APIError"
 	"github.com/gin-gonic/gin"
+	"github.com/sirupsen/logrus"
 	"io/ioutil"
 	"os"
 	"path"
@@ -49,10 +50,12 @@ func getPublicKey(env string) jwt.Keyfunc {
 			}
 			publicKeyByte, err := ioutil.ReadFile(publicKeyPath)
 			if err != nil {
+				logrus.Error(err)
 				return nil, fmt.Errorf("Read Key Error. ")
 			}
 			publicKey, err := jwt.ParseRSAPublicKeyFromPEM(publicKeyByte)
 			if err != nil {
+				logrus.Error(err)
 				return nil, err
 			}
 			return publicKey, nil
