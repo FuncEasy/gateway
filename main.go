@@ -37,6 +37,7 @@ func main() {
 	function.POST("/create/:id", router.CreateFunctionCR)
 	function.PUT("update/:id", router.UpdateFunctionCR)
 	function.DELETE("/delete/:id", router.DeleteFunctionCR)
+	function.GET("/logs/:id", router.FunctionLogs)
 
 	dataSource := r.Group("/dataSource")
 	dataSource.POST("/create", router.CreateDataSource)

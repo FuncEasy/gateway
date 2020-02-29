@@ -8,11 +8,16 @@ import (
 	v1 "github.com/funceasy/gateway/pkg/apis/funceasy.com/v1"
 	funceasy "github.com/funceasy/gateway/pkg/clientset/versioned"
 	"github.com/gin-gonic/gin"
+	"io"
 	"io/ioutil"
+	coreV1 "k8s.io/api/core/v1"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
+	"k8s.io/apimachinery/pkg/labels"
 	"k8s.io/apimachinery/pkg/types"
+	"k8s.io/client-go/kubernetes"
 	"k8s.io/client-go/util/retry"
 	"net/http"
+	"strconv"
 )
 
 func CreateFunctionCR(c *gin.Context) {
@@ -189,6 +194,58 @@ func FunctionCall(env string, proxyHost string, method string) func(c *gin.Conte
 	}
 }
 
+func FunctionLogs(c *gin.Context) {
+	id := c.Param("id")
+	if id == "" {
+		APIError.PanicError(nil, "ID is Required", 422)
+	}
+	lines := c.DefaultQuery("lines", "20")
+	ClientSet, _ := c.Get("OriginClientSet")
+	if ClientSet, ok := ClientSet.(*kubernetes.Clientset); ok {
+		labelsMap := map[string]string{
+			"app":    "funceasy_function",
+			"funcId": id,
+		}
+		labelSelector := labels.Set(labelsMap).String()
+		listOptions := metav1.ListOptions{
+			LabelSelector: labelSelector,
+		}
+		podClient := ClientSet.CoreV1().Pods("funceasy")
+		pods, err := podClient.List(listOptions)
+		if err != nil {
+			APIError.PanicError(err, "Failed Get Pods", 500)
+		}
+		var readers []*io.ReadCloser
+		buf := new(bytes.Buffer)
+		lines, err := strconv.ParseInt(lines, 10, 64)
+		for _, item := range pods.Items {
+			req := podClient.GetLogs(item.Name, &coreV1.PodLogOptions{
+				Timestamps: true,
+				TailLines:  &lines,
+			})
+			podLogs, err := req.Stream()
+			readers = append(readers, &podLogs)
+			if err != nil {
+				APIError.Panic(err)
+			}
+			buf.WriteString(" ========== POD: " + item.Name + " ==========\n")
+			_, err = io.Copy(buf, podLogs)
+			if err != nil {
+				APIError.Panic(err)
+			}
+		}
+		defer func() {
+			for _, item := range readers {
+				(*item).Close()
+			}
+		}()
+		c.JSON(200, gin.H{
+			"logs": buf.String(),
+		})
+	} else {
+		APIError.PanicError(fmt.Errorf("Failed Get ClientSet "), "Failed Get ClientSet", 500)
+	}
+}
 
 func getDataSourceToken(c *gin.Context, dataSourceId string) string {
 	DataSourceToken, _ := c.Get("DATA_SOURCE_TOKEN")
