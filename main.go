@@ -14,7 +14,7 @@ func main() {
 	env = flag.String("env", "dev", "run env")
 	flag.Parse()
 	fmt.Println(*env)
-	port := os.Getenv("GATEWAY_SERVICE_PORT")
+	port := os.Getenv("FUNCEASY_GATEWAY_SERVICE_PORT")
 	if port == "" {
 		port = ":8082"
 	} else {

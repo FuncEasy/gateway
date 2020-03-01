@@ -2,20 +2,20 @@ apiVersion: v1
 kind: Service
 metadata:
   namespace: funceasy
-  name: gateway
+  name: funceasy-gateway
 spec:
+  type: ClusterIP
   ports:
     - port: 80
       targetPort: 8082
   selector:
-    app: gateway
-  clusterIP: None
+    app: funceasy-gateway
 ---
 apiVersion: v1
 kind: Service
 metadata:
   namespace: funceasy
-  name: gateway-nodeport
+  name: funceasy-gateway-nodeport
 spec:
   type: NodePort
   ports:
@@ -23,28 +23,30 @@ spec:
       targetPort: 8082
       nodePort: 30123
   selector:
-    app: gateway
+    app: funceasy-gateway
 ---
 apiVersion: apps/v1
 kind: Deployment
 metadata:
   namespace: funceasy
-  name: gateway
+  name: funceasy-gateway
 spec:
   selector:
     matchLabels:
-      app: gateway
+      app: funceasy-gateway
   template:
     metadata:
       labels:
-        app: gateway
+        app: funceasy-gateway
     spec:
       containers:
         - image: ziqiancheng/funceasy-gateway
-          name: gateway
+          name: funceasy-gateway
           env:
             - name: DATA_SOURCE_SERVICE
               value: data-source-service
+            - name: FUNCEASY_GATEWAY_SERVICE_PORT
+              value: "8082"
           ports:
             - containerPort: 8082
           volumeMounts:
