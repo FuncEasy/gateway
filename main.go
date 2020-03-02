@@ -30,6 +30,9 @@ func main() {
 	r.Use(middleware.DataSourceAuthentication(*env))
 	r.Use(middleware.DataSourceService(*env))
 
+	config := r.Group("/config")
+	config.GET("/", router.GetConfig)
+
 	function := r.Group("/function")
 	function.POST("/call/:id", router.FunctionCall(*env, proxyHost, "POST"))
 	function.GET("/call/:id", router.FunctionCall(*env, proxyHost, "GET"))
