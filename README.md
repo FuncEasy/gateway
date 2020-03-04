@@ -1,2 +1,2 @@
 # gateway
-Gateway Handle CRUD For FunctionCRD
+Gateway Handle Functions and Data Service
